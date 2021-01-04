@@ -2,8 +2,9 @@ from django.db import models
 
 # Create your models here.
 
-SITUACAO = [("SUCESSO", "SUCESSO"),
-             ("ERRO", "ERRO")]
+SITUACAO = [("ENVIADO PARA PROCESSAMENTO", "ENVIADO PARA PROCESSAMENTO"),
+             ("CARGA REALIZADA COM SUCESSO", "CARGA REALIZADA COM SUCESSO"),   
+             ("ERRO AO RELIZAR A CARGA DO ARQUIVOS", "ERRO AO RELIZAR A CARGA DO ARQUIVOS")]
 
 class TimeStampedModel(models.Model):
     data = models.DateField(auto_now=True)
@@ -48,10 +49,14 @@ class Processo(TimeStampedModel):
 
 class Historico(TimeStampedModel):
     processo = models.ForeignKey(Processo, models.CASCADE, verbose_name="Processo", related_name='modelo_historico')
-    situacao = models.CharField(choices=SITUACAO, verbose_name="Situação", max_length=20)
+    situacao = models.CharField(choices=SITUACAO, verbose_name="Situação", max_length=40)
+    observacao = models.CharField(max_length=200)
 
     def __str__(self):
         return self.processo.nome
+
+    def nome_processo(self):  
+        return self.processo.nome 
 
 
 

@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+
+{% block extrastyle %} 
+
+<style>
+
+    #header
+    {   
+
+        font-size: 14px;
+        
+        font-weight: bold;
+        background: #a91124;
+        
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        margin: 0;
+        padding: 8px;
+        font-weight: 400;
+        font-size: 13px;
+        text-align: left;
+        background: #a91124;
+        color: #fff;
+    }
+
+    #branding h1, #branding h1 a:link, #branding h1 a:visited {
+        color: white;
+    }
+
+    a:link, a:visited {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .main > .content {
+        flex: 1 0;
+        max-width: 100%;
+        background-color: #eae6df;
+    }
+
+    h1 {
+        margin: 0 0 20px;
+        font-weight: 300;
+        font-size: 20px;
+        color: #940709;
+    }
+
+    div.breadcrumbs {
+        background: #b3172b;
+        padding: 10px 40px;
+        border: none;
+        font-size: 14px;
+        color: #c4dce8;
+        text-align: left;
+    }
+
+    td, th {
+        font-size: 15px;
+        line-height: 16px;
+        border-bottom: 1px solid #eee;
+        vertical-align: top;
+        padding: 8px;
+        font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-size: 15px;
+        font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+        color: #333;
+        background: #fff;
+    }
+
+    label {
+        font-weight: normal;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .sticky {
+        position: sticky;
+        max-height: 100vh;
+        padding-top: 10px;
+    }
+
+
+
+</style>
+
+{% endblock %}
+
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        
+    </a> Anaplan
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
