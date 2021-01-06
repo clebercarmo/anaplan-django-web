@@ -6,15 +6,48 @@ from django.shortcuts import redirect
 from integrador.AnaplanImportCaller import envio_anaplan
 
 # Register your models here.
-class ParametrosProcessListInline(admin.StackedInline):
-    model = ParametrosProcessList
-
 
 @admin.register(Modelo)
 class ModeloAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['descricao']
+
+class ParametrosProcessListInline(admin.TabularInline):
+    model = ParametrosProcessList
 
 
+class ParametrosExecucaoListInline(admin.TabularInline):
+    model = ParametrosExecucao
+
+
+
+class ArquivosExecucaoInline(admin.StackedInline):
+    model = ArquivosExecucao
+
+
+
+@admin.register(Execucao)
+class ExecucaoAdmin(admin.ModelAdmin):
+    actions = ['carga_anaplan']
+    autocomplete_fields = ['processlist']
+    search_fields = ['descricao', 'processlist__descricao']
+    list_filter = ['processlist__descricao']
+    list_display = ['descricao']
+
+    inlines = [
+        ParametrosExecucaoListInline,
+    ]
+
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size':'90'})},
+        models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':80})},
+    }
+
+    def carga_anaplan(self, request, queryset):
+         return redirect('/anaplan/integrador/historico/')
+
+
+
+'''
 @admin.register(Processo)
 class ProcessoAdmin(admin.ModelAdmin):
     
@@ -40,7 +73,7 @@ class ProcessoAdmin(admin.ModelAdmin):
             Historico.objects.create(processo =obj, situacao="ENVIADO PARA PROCESSAMENTO", observacao="Arquivos Enviados com Sucesso")
         return redirect('/anaplan/integrador/historico/')
 
-
+'''
 @admin.register(Historico)
 class HistoricoAdmin(admin.ModelAdmin):
     
@@ -65,7 +98,7 @@ class ProcessListAdmin(admin.ModelAdmin):
         models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':80})},
     }
 
-    list_display = ['descricao', 'modelo']
-    search_fields = ['modelo']
-    list_filter = ['modelo']
+    list_display = ['modelo', 'descricao', 'nome_processo_anaplan']
+    search_fields = ['descricao', 'modelo__descricao', 'nome_processo_anaplan']
+    list_filter = ['modelo__descricao']
     ordering = ['-hora']

@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'integrador.apps.IntegradorConfig'
+    'django_select2',
+    'integrador.apps.IntegradorConfig',
+    
 ]
 
 MIDDLEWARE = [
