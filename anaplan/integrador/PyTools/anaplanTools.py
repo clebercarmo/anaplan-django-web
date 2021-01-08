@@ -2,8 +2,9 @@ import base64
 import requests
 from requests.exceptions import HTTPError
 import json
-import integrador.PyTools.sendemail
+from integrador.PyTools.sendemail import sendEmail
 from integrador.PyTools.anaplanConnection import AnaplanConnection
+from integrador.models import *
 
 #===============================================================================
 # Defining global variables
@@ -22,34 +23,55 @@ class anaplanImport(object):
     def connectToAnaplanModel(cls, email, password, modelName):
         # Get the token
         print("CONN01 - Anaplan Connection starting")
+        Historico.objects.create(situacao="ANAPLAN", observacao="CONN01 - Anaplan Connection starting")
         tokenValue = cls.getTokenBasicAuth(email, password)
         print("CONN02 - Anaplan Token Value Retrieved")
+        Historico.objects.create(situacao="ANAPLAN", observacao="CONN02 - Anaplan Token Value Retrieved")
         # Get the list of models and choose one
-        print ("CONN03 - Getting Ws and Model IDs")
-        modelInfos = cls.getWsModelIds(tokenValue, modelName)
-        modelId = modelInfos[0]
-        workspaceId = modelInfos[1]
-        print("CONN04 - Workspace and Model ID Retrieved")
-        conn = AnaplanConnection(tokenValue, workspaceId, modelId)
-        return conn
-
+        
+        try:
+            print ("CONN03 - Getting Ws and Model IDs")
+            Historico.objects.create(situacao="ANAPLAN", observacao="CONN03 - Getting Ws and Model IDs")
+            modelInfos = cls.getWsModelIds(tokenValue, modelName)
+            modelId = modelInfos[0]
+            workspaceId = modelInfos[1]
+            print("CONN04 - Workspace and Model ID Retrieved")
+            Historico.objects.create(situacao="ANAPLAN", observacao="CONN04 - Workspace and Model ID Retrieved")
+            conn = AnaplanConnection(tokenValue, workspaceId, modelId)
+            return conn       
+        except Exception as exe:
+            #Historico.objects.create(situacao="ERRO ANAPLAN", observacao="Modelo Inexistente")
+            pass
+       
+       
     @classmethod
     def sendFile(cls, conn, datasourceName, contentToSend, **params):
-        tokenValue = conn.authorization
-        workspaceId = conn.workspaceGuid
-        modelId = conn.modelGuid
-        # Get the list of imports and choose one with the importId and the datasourceId
-        print ('DATA001 - %s - Retrieving the list of imports' %(datasourceName))
-        importInfos = cls.getDatasourceInfo(tokenValue, workspaceId, modelId, datasourceName)
-        print ("DATA002 - %s - Import and Datasource ID retrieved" %(datasourceName))
-        datasourceId = importInfos[1]
-        # Send the data to Anaplan to update datasource
-        print("DATA003 - %s - Evaluating data to send to Anaplan" %(datasourceName))
-        if (contentToSend != None):
-            sendData = cls.sendData(tokenValue, workspaceId, modelId, datasourceId, 1, contentToSend)
-            print("DATA004 - %s - Data Sent" %(datasourceName))
-        else:
-            print("DATA004 - %s - No Data to send" %(datasourceName))
+        try:
+            tokenValue = conn.authorization
+            workspaceId = conn.workspaceGuid
+            modelId = conn.modelGuid
+            # Get the list of imports and choose one with the importId and the datasourceId
+            print ('DATA001 - %s - Retrieving the list of imports' %(datasourceName))
+            Historico.objects.create(situacao="ANAPLAN", observacao='DATA001 - %s - Retrieving the list of imports' %(datasourceName))
+            importInfos = cls.getDatasourceInfo(tokenValue, workspaceId, modelId, datasourceName)
+            print ("DATA002 - %s - Import and Datasource ID retrieved" %(datasourceName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="DATA002 - %s - Import and Datasource ID retrieved" %(datasourceName))
+            datasourceId = importInfos[1]
+            # Send the data to Anaplan to update datasource
+            print("DATA003 - %s - Evaluating data to send to Anaplan" %(datasourceName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="DATA003 - %s - Evaluating data to send to Anaplan" %(datasourceName))
+            if (contentToSend != None):
+                sendData = cls.sendData(tokenValue, workspaceId, modelId, datasourceId, 1, contentToSend)
+                print("DATA004 - %s - Data Sent" %(datasourceName))
+                Historico.objects.create(situacao="ANAPLAN", observacao="DATA004 - %s - Data Sent" %(datasourceName))
+            else:
+                print("DATA004 - %s - No Data to send" %(datasourceName))
+                Historico.objects.create(situacao="ANAPLAN", observacao="DATA004 - %s - No Data to send" %(datasourceName))
+            
+        except Exception as exe:
+            Historico.objects.create(situacao="ERRO AO RELIZAR A CARGA DO ARQUIVOS", observacao="Não foi possivel obter a conexão")
+
+        
 
     @classmethod
     def executeImport(cls, conn, importFile, **params):
@@ -73,27 +95,38 @@ class anaplanImport(object):
         print("IMPORT008 - %s - Status Retrieved" %(importFile))
         emailSubject = "Anaplan Execution - " + importFile
         emailText = checkStatusImport
-        sendemail.sendEmail(emailSubject,emailText)
+        #sendemail.sendEmail(emailSubject,emailText)
 
     @classmethod
     def executeProcess(cls, conn, processName, **params):
-        tokenValue = conn.authorization
-        workspaceId = conn.workspaceGuid
-        modelId = conn.modelGuid
-        # Get the list of imports and choose one with the importId and the datasourceId
-        print("PROC001 - %s - Retrieving the list of imports" %(processName))
-        processInfos = cls.getProcessInfo(tokenValue, workspaceId, modelId, processName)
-        processId = processInfos
-        print("PROC002 - %s - Import ID retrieved. See below:" %(processName))
-        # # Trigger the import
-        print("PROC003 - %s - Executing the Process" %(processName))
-        print(params)
-        executeImport = cls.execute_action_with_parameters(conn, processId, 3, **params)
-        print("PROC004 - %s - Process Executed" %(processName))
-        # # Get the status of the import
-        emailSubject = "Anaplan Execution - " + processName
-        emailText = executeImport
-        sendemail.sendEmail(emailSubject, emailText)
+
+        
+            tokenValue = conn.authorization
+            workspaceId = conn.workspaceGuid
+            modelId = conn.modelGuid
+            # Get the list of imports and choose one with the importId and the datasourceId
+            print("PROC001 - %s - Retrieving the list of imports" %(processName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="PROC001 - %s - Retrieving the list of imports" %(processName))
+            processInfos = cls.getProcessInfo(tokenValue, workspaceId, modelId, processName)
+            processId = processInfos
+            print("PROC002 - %s - Import ID retrieved. See below:" %(processName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="PROC002 - %s - Import ID retrieved. See below:" %(processName))
+            # # Trigger the import
+            print("PROC003 - %s - Executing the Process" %(processName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="PROC003 - %s - Executing the Process" %(processName))
+            print(params)
+            executeImport = cls.execute_action_with_parameters(conn, processId, 3, **params)
+            print("PROC004 - %s - Process Executed" %(processName))
+            Historico.objects.create(situacao="ANAPLAN", observacao="PROC004 - %s - Process Executed" %(processName))
+            # # Get the status of the import
+            emailSubject = "Anaplan Execution - " + processName
+            emailText = executeImport
+            sendEmail(emailSubject, emailText)
+            Historico.objects.create(situacao="ERRO ANAPLAN", observacao=emailSubject + ' - ' + emailText)
+     
+
+
+        
 
     @classmethod
     def getTokenBasicAuth(cls, email, password):
@@ -119,9 +152,13 @@ class anaplanImport(object):
         jsonResponse = json.loads(response.content)
         modelsArray = jsonResponse["models"]
         modelInfo = [model for model in modelsArray if model['name'] == modelName]
-        modelId = modelInfo[0]["id"]
-        wsId = modelInfo[0]["currentWorkspaceId"]
-        return modelId, wsId
+        try:
+            modelId = modelInfo[0]["id"]
+            wsId = modelInfo[0]["currentWorkspaceId"]
+            return modelId, wsId
+        except Exception as exe:
+            Historico.objects.create(situacao="ERRO AO RELIZAR A CARGA DO ARQUIVOS", observacao="Modelo Inexistente")
+       
 
     @classmethod
     def getImportInfo(cls, token, wsId, modelId, importName):

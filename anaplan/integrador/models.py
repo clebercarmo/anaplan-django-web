@@ -4,7 +4,9 @@ from django.db import models
 
 SITUACAO = [("ENVIADO PARA PROCESSAMENTO", "ENVIADO PARA PROCESSAMENTO"),
              ("CARGA REALIZADA COM SUCESSO", "CARGA REALIZADA COM SUCESSO"),   
-             ("ERRO AO RELIZAR A CARGA DO ARQUIVOS", "ERRO AO RELIZAR A CARGA DO ARQUIVOS")]
+             ("ERRO AO RELIZAR A CARGA DO ARQUIVOS", "ERRO AO RELIZAR A CARGA DO ARQUIVOS"),
+             ("ANAPLAN", "ANAPLAN"),
+             ("ERRO ANAPLAN", "ERRO ANAPLAN")]
 
 class TimeStampedModel(models.Model):
     data = models.DateField(auto_now=True)
@@ -89,7 +91,8 @@ class ParametrosExecucao(TimeStampedModel):
 
 
 class Historico(TimeStampedModel):
-    processo = models.ForeignKey(Processo, models.CASCADE, verbose_name="Processo", related_name='modelo_historico')
+    processo = models.ForeignKey(Processo, models.CASCADE, verbose_name="Processo", related_name='modelo_historico', blank=True, null=True)
+    execucao = models.ForeignKey(Execucao, models.CASCADE, verbose_name="Execucao", related_name='execucao_historico', blank=True, null=True)
     situacao = models.CharField(choices=SITUACAO, verbose_name="Situação", max_length=40)
     observacao = models.CharField(max_length=200)
 
@@ -97,7 +100,7 @@ class Historico(TimeStampedModel):
         verbose_name_plural = 'Log de Carga Arquivos Anaplan'
 
     def __str__(self):
-        return self.processo.nome
+        return self.situacao
 
     def nome_processo(self):  
         return self.processo.nome 

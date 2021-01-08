@@ -8,15 +8,15 @@ def envio_anaplan(model, diretorio, processList):
    
     usuario_anaplan = User.objects.get(groups__name='Acesso Anaplan')
     model = model
-    user="paolovm3@yahoo.com.br"
+    user="paolo.malafaia@flexthink.com.au"
     pwd = "Number28"
     #user = usuario_anaplan.username
     #pwd = usuario_anaplan.password
 
     diretorio_script = pathlib.Path(__file__).parent.absolute()
 
-    pasta_in = diretorio
-    pasta_out = str(diretorio_script) + '/OUT/'
+    pasta_in = diretorio + '/IN/'
+    pasta_out = diretorio + '/OUT/'
 
     dataList = ler_arquivos_pasta(pasta_in)
 

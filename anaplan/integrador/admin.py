@@ -32,6 +32,7 @@ class ExecucaoAdmin(admin.ModelAdmin):
     search_fields = ['descricao', 'processlist__descricao']
     list_filter = ['processlist__descricao']
     list_display = ['descricao']
+    ordering = ['-hora']
 
     inlines = [
         ParametrosExecucaoListInline,
@@ -43,7 +44,29 @@ class ExecucaoAdmin(admin.ModelAdmin):
     }
 
     def carga_anaplan(self, request, queryset):
-         return redirect('/anaplan/integrador/historico/')
+        l_process_list = []
+        d_process_list = {}
+        l_process_list_final = []
+        s_modelo = ""
+
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+        for obj in queryset:
+            for process_list in obj.processlist.all():  
+                for param_process_list in process_list.parametros_processlist.all():       
+                   d_process_list[param_process_list.chave] = param_process_list.valor     
+                   #l_process_list.append({param_process_list.chave: param_process_list.valor})
+                print(d_process_list)
+                s_modelo = process_list.modelo.descricao
+                l_process_list_final.append([process_list.nome_processo_anaplan, d_process_list])
+                #d_process_list.clear()
+                #l_process_list = []
+            #print(getatt[r(obj, "id"))
+            #print([getattr(obj, field) for field in field_names])
+            envio_anaplan(s_modelo, obj.pasta_arquivos, l_process_list_final)
+            #Historico.objects.create(execucao =obj, situacao="ENVIADO PARA PROCESSAMENTO", observacao="Arquivos Enviados com Sucesso")
+           
+        return redirect('/anaplan/integrador/historico/')
 
 
 
@@ -80,7 +103,7 @@ class HistoricoAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
     
-    list_display = ['hora', 'nome_processo', 'situacao']
+    list_display = ['hora', 'situacao', 'observacao']
     search_fields = ['situacao']
     list_filter = ['situacao']
     ordering = ['-hora']
