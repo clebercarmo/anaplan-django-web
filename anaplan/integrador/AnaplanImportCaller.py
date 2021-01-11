@@ -16,8 +16,8 @@ def envio_anaplan(model, diretorio, processList, dataList):
 
     diretorio_script = pathlib.Path(__file__).parent.absolute()
 
-    pasta_in = diretorio + '/IN/'
-    pasta_out = diretorio + '/OUT/'
+    pasta_in = diretorio
+    #pasta_out = diretorio + '/OUT/'
 
     dataList = dataList
     #dataList = ler_arquivos_pasta(pasta_in) ANTIGO
@@ -28,4 +28,4 @@ def envio_anaplan(model, diretorio, processList, dataList):
 
     processList=processList
     dtAquisicao.main(user, pwd, model, dataList, importList, processList)
-    mover_arquivos(pasta_in, pasta_out)
+    #mover_arquivos(pasta_in, pasta_out)
