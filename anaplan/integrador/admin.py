@@ -47,6 +47,7 @@ class ExecucaoAdmin(admin.ModelAdmin):
         l_process_list = []
         d_process_list = {}
         l_process_list_final = []
+        l_arquivos = []
         s_modelo = ""
 
         meta = self.model._meta
@@ -61,9 +62,11 @@ class ExecucaoAdmin(admin.ModelAdmin):
                 l_process_list_final.append([process_list.nome_processo_anaplan, d_process_list])
                 #d_process_list.clear()
                 #l_process_list = []
+            for arquivos in ParametrosExecucao.objects.filter(execucao=obj):
+                l_arquivos.append([arquivos.arquivo_anaplan, 'C:\\Temp\IN\\' + arquivos.arquivo_forno])
             #print(getatt[r(obj, "id"))
             #print([getattr(obj, field) for field in field_names])
-            envio_anaplan(s_modelo, obj.pasta_arquivos, l_process_list_final)
+            envio_anaplan(s_modelo, obj.pasta_arquivos, l_process_list_final, l_arquivos)
             #Historico.objects.create(execucao =obj, situacao="ENVIADO PARA PROCESSAMENTO", observacao="Arquivos Enviados com Sucesso")
            
         return redirect('/anaplan/integrador/historico/')

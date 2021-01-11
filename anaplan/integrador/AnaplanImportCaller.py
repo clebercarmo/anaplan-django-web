@@ -4,7 +4,8 @@ from integrador.util import ler_arquivos_pasta, mover_arquivos
 from django.contrib.auth.models import User
 
 
-def envio_anaplan(model, diretorio, processList):
+#def envio_anaplan(model, diretorio, processList):
+def envio_anaplan(model, diretorio, processList, dataList):
    
     usuario_anaplan = User.objects.get(groups__name='Acesso Anaplan')
     model = model
@@ -18,7 +19,8 @@ def envio_anaplan(model, diretorio, processList):
     pasta_in = diretorio + '/IN/'
     pasta_out = diretorio + '/OUT/'
 
-    dataList = ler_arquivos_pasta(pasta_in)
+    dataList = dataList
+    #dataList = ler_arquivos_pasta(pasta_in) ANTIGO
 
     importList =\
     [

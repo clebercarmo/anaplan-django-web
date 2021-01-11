@@ -1,11 +1,15 @@
 from django.db import models
 
 # Create your models here.
-
+'''
 SITUACAO = [("ENVIADO PARA PROCESSAMENTO", "ENVIADO PARA PROCESSAMENTO"),
              ("CARGA REALIZADA COM SUCESSO", "CARGA REALIZADA COM SUCESSO"),   
              ("ERRO AO RELIZAR A CARGA DO ARQUIVOS", "ERRO AO RELIZAR A CARGA DO ARQUIVOS"),
              ("ANAPLAN", "ANAPLAN"),
+             ("ERRO ANAPLAN", "ERRO ANAPLAN")]
+'''
+
+SITUACAO = [ ("ANAPLAN", "ANAPLAN"),
              ("ERRO ANAPLAN", "ERRO ANAPLAN")]
 
 class TimeStampedModel(models.Model):

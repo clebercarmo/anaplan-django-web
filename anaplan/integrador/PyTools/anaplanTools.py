@@ -122,7 +122,7 @@ class anaplanImport(object):
             emailSubject = "Anaplan Execution - " + processName
             emailText = executeImport
             sendEmail(emailSubject, emailText)
-            Historico.objects.create(situacao="ERRO ANAPLAN", observacao=emailSubject + ' - ' + emailText)
+            Historico.objects.create(situacao="ANAPLAN", observacao=emailSubject + ' - ' + emailText)
      
 
 
@@ -193,19 +193,28 @@ class anaplanImport(object):
 
     @classmethod
     def getProcessInfo(cls, token, wsId, modelId, processName):
-        # Get the list of processes and choose one with the processId
-        headers = {'Authorization': 'AnaplanAuthToken %s' % token, 'Content-Type': 'application/json'}
-        response = requests.get(
-            urlStem + "/workspaces/" + wsId + "/models/" + modelId + "/processes",
-            headers=headers
-        )
+        try:
+            
+        
+            
+            # Get the list of processes and choose one with the processId
+            headers = {'Authorization': 'AnaplanAuthToken %s' % token, 'Content-Type': 'application/json'}
+            response = requests.get(
+                urlStem + "/workspaces/" + wsId + "/models/" + modelId + "/processes",
+                headers=headers
+            )
 
-        jsonResponse = json.loads(response.content)
-        processesArray = jsonResponse["processes"]
-        processesInfo = [processInfo for processInfo in processesArray if processInfo['name'] == processName]
-        processId = processesInfo[0]["id"]
+            jsonResponse = json.loads(response.content)
+            processesArray = jsonResponse["processes"]
+            processesInfo = [processInfo for processInfo in processesArray if processInfo['name'] == processName]
+            processId = processesInfo[0]["id"]
 
-        return processId
+            return processId
+
+        except Exception as exe:
+            Historico.objects.create(situacao="ERRO ANAPLAN", observacao="Processo Inexistente")
+            pass
+
 
     @classmethod
     def sendData(cls, token, wsId, modelId, fileId, chunkCount, content):
